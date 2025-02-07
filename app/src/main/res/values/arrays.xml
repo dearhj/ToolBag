@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="actions_images">
+        <item>@drawable/icon_compass</item>
+        <item>@drawable/icon_handingpaint</item>
+        <item>@drawable/icon_plumb</item>
+        <item>@drawable/icon_protractor</item>
+        <item>@drawable/icon_torch</item>
+    </array>
+    <string-array name="action_name">
+        <item>指南针</item>
+        <item>挂画</item>
+        <item>铅锤</item>
+        <item>量角器</item>
+        <item>手电筒</item>
+    </string-array>
+</resources>
