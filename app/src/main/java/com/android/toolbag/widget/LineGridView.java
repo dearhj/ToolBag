@@ -8,50 +8,44 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.GridView;
 
-/* loaded from: classes.dex */
 public class LineGridView extends GridView {
 
-    /* renamed from: b  reason: collision with root package name */
-    private Context mContext;
+    private final Context mContext;
 
     public LineGridView(Context context) {
         super(context);
         this.mContext = context;
     }
 
-    @Override // android.widget.AbsListView, android.view.ViewGroup, android.view.View
+    @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-//        if (this.f2227b.getResources().getBoolean(R.bool.config_show_gridview_divide)) {
-            int width = getWidth() / getChildAt(0).getWidth();
-            int childCount = getChildCount();
-            Paint paint = new Paint();
-            paint.setStrokeWidth(3.0f);
-            paint.setStyle(Paint.Style.STROKE);
-//            paint.setColor(getContext().getResources().getColor(R.color.gridview_divide));
-            paint.setColor(Color.GREEN);
-            int i2 = 0;
-            while (i2 < childCount) {
-                View childAt = getChildAt(i2);
-                int i3 = i2 + 1;
-                if (i3 % width == 0) {
-                    canvas.drawLine(childAt.getLeft(), childAt.getBottom(), childAt.getRight(), childAt.getBottom(), paint);
-                } else if (i3 > childCount - (childCount % width)) {
-                    canvas.drawLine(childAt.getRight(), childAt.getTop(), childAt.getRight(), childAt.getBottom(), paint);
-                } else {
-                    canvas.drawLine(childAt.getRight(), childAt.getTop(), childAt.getRight(), childAt.getBottom(), paint);
-                    canvas.drawLine(childAt.getLeft(), childAt.getBottom(), childAt.getRight(), childAt.getBottom(), paint);
-                }
-                i2 = i3;
+        // 获取每行的子项数量
+        int lineCount = getWidth() / getChildAt(0).getWidth();
+        // 获取子项总数
+        int childCount = getChildCount();
+        Paint paint = new Paint();
+        paint.setStrokeWidth(3.0f);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(Color.GRAY);
+        for (int itemIndex = 0; itemIndex < childCount; itemIndex++) {
+            View childAt = getChildAt(itemIndex);
+            if ((itemIndex + 1) % lineCount != 0) { //绘制垂直线
+                float startY = ((float) (childAt.getBottom() - childAt.getTop()) / 4) + childAt.getTop();
+                canvas.drawLine(childAt.getRight(), startY, childAt.getRight(), childAt.getBottom(), paint);
             }
-            int i4 = childCount % width;
-            if (i4 != 0) {
-                for (int i5 = 0; i5 < width - i4; i5++) {
-                    View childAt2 = getChildAt(childCount - 1);
-                    canvas.drawLine(childAt2.getRight() + (childAt2.getWidth() * i5), childAt2.getTop(), childAt2.getRight() + (childAt2.getWidth() * i5), childAt2.getBottom(), paint);
-                }
-            }
-//        }
+            // 绘制水平线
+            canvas.drawLine(childAt.getLeft(), childAt.getBottom(), childAt.getRight(), childAt.getBottom(), paint);
+        }
+        // 处理最后一行的水平线
+        if (childCount % lineCount != 0) {
+            // 获取最后一行的第一个子项
+            View lastLineFirstItem = getChildAt(childCount - (childCount % lineCount));
+            // 获取最后一行的最后一个子项
+            View lastLineLastItem = getChildAt(childCount - 1);
+            // 绘制最后一行的水平线
+            canvas.drawLine(lastLineFirstItem.getLeft(), lastLineLastItem.getBottom(), lastLineLastItem.getRight() + (lastLineLastItem.getWidth() * (lineCount - (childCount % lineCount))), lastLineLastItem.getBottom(), paint);
+        }
     }
 
     public LineGridView(Context context, AttributeSet attributeSet) {

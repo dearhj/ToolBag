@@ -1,10 +1,11 @@
 package com.android.toolbag
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.os.Bundle
 import android.widget.SimpleAdapter
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import com.android.toolbag.widget.LineGridView
 import java.util.HashMap
 
@@ -19,8 +20,14 @@ class MainActivity : AppCompatActivity() {
     @SuppressLint("Recycle")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) { //实现底部导航栏透明
+            // 设置窗口不适应系统窗口，允许内容绘制在系统栏后面
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            // 禁用导航栏对比度增强（防止出现半透明遮罩）
+            window.isNavigationBarContrastEnforced = false
+        }
 
         lineGridView = findViewById(R.id.tools_app)
 
@@ -34,7 +41,7 @@ class MainActivity : AppCompatActivity() {
         }
         obtainTypedArray.recycle()
         item = ArrayList()
-        for (i in actionImageResIds.indices) {
+        actionImageResIds.indices.forEach { i ->
             val hashMap = HashMap<String, Any>()
             hashMap["img"] = Integer.valueOf(actionImageResIds[i])
             hashMap["text"] = stringName!![i]
