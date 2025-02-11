@@ -7,23 +7,23 @@
         <item>@drawable/icon_gradienter</item>
         <item>@drawable/icon_height_measure</item>
         <item>@drawable/icon_magnifier</item>
-        <item>@drawable/icon_mirror</item>
+<!--        <item>@drawable/icon_mirror</item>-->
         <item>@drawable/icon_alarm</item>
         <item>@drawable/icon_plumb</item>
         <item>@drawable/icon_protractor</item>
         <item>@drawable/icon_torch</item>
     </array>
     <string-array name="action_name">
-        <item>指南针</item>
-        <item>噪音测试</item>
-        <item>挂画</item>
-        <item>水平仪</item>
-        <item>高度测量</item>
-        <item>放大镜</item>
-        <item>镜子</item>
-        <item>警报</item>
-        <item>铅锤</item>
-        <item>量角器</item>
-        <item>手电筒</item>
+        <item>@string/compass</item>
+        <item>@string/noise</item>
+        <item>@string/handingpaint</item>
+        <item>@string/gradienter</item>
+        <item>@string/height_measure</item>
+        <item>@string/magnifier</item>
+<!--        <item>@string/mirror</item>-->
+        <item>@string/alarm</item>
+        <item>@string/plumb</item>
+        <item>@string/protractor</item>
+        <item>@string/torch</item>
     </string-array>
 </resources>

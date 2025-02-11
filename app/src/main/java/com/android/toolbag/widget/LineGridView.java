@@ -25,10 +25,12 @@ public class LineGridView extends GridView {
         // 获取子项总数
         int childCount = getChildCount();
         Paint paint = new Paint();
-        paint.setStrokeWidth(3.0f);
+        paint.setStrokeWidth(5.0f);
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.GRAY);
-        for (int itemIndex = 0; itemIndex < childCount; itemIndex++) {
+        int lastLineCount = childCount % lineCount;
+        //绘制除最后一行外的垂直线和水平线
+        for (int itemIndex = 0; itemIndex < childCount - lastLineCount; itemIndex++) {
             View childAt = getChildAt(itemIndex);
             if ((itemIndex + 1) % lineCount != 0) { //绘制垂直线
                 float startY = ((float) (childAt.getBottom() - childAt.getTop()) / 4) + childAt.getTop();
@@ -37,12 +39,19 @@ public class LineGridView extends GridView {
             // 绘制水平线
             canvas.drawLine(childAt.getLeft(), childAt.getBottom(), childAt.getRight(), childAt.getBottom(), paint);
         }
-        // 处理最后一行的水平线
-        if (childCount % lineCount != 0) {
+        // 处理最后一行的水平线及其垂直线
+        if (lastLineCount != 0) {
             // 获取最后一行的第一个子项
             View lastLineFirstItem = getChildAt(childCount - (childCount % lineCount));
             // 获取最后一行的最后一个子项
             View lastLineLastItem = getChildAt(childCount - 1);
+            //绘制最后一行的垂直线
+            float startY = ((float) (lastLineFirstItem.getBottom() - lastLineFirstItem.getTop()) / 4) + lastLineFirstItem.getTop();
+            float startX = lastLineFirstItem.getRight();
+            for (int lastLineIndex = 0; lastLineIndex < lineCount - 1; lastLineIndex ++) {
+                canvas.drawLine(startX, startY, startX, lastLineFirstItem.getBottom(), paint);
+                startX = startX + lastLineFirstItem.getWidth();
+            }
             // 绘制最后一行的水平线
             canvas.drawLine(lastLineFirstItem.getLeft(), lastLineLastItem.getBottom(), lastLineLastItem.getRight() + (lastLineLastItem.getWidth() * (lineCount - (childCount % lineCount))), lastLineLastItem.getBottom(), paint);
         }

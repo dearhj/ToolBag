@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">工具箱</string>
+    <string name="alarm">警报</string>
+    <string name="compass">指南针</string>
+    <string name="gradienter">水平仪</string>
+    <string name="handingpaint">挂画</string>
+    <string name="height_measure">高度测量</string>
+    <string name="magnifier">放大镜</string>
+    <string name="mirror">镜子</string>
+    <string name="noise">噪音测试</string>
+    <string name="plumb">铅锤</string>
+    <string name="protractor">量角器</string>
+    <string name="torch">手电筒</string>
+</resources>

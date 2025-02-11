@@ -1,7 +1,14 @@
 <resources>
     <string name="app_name">ToolBag</string>
-    <string name="app_name1">ToolBag</string>
-    <string name="app_name2">ToolBag</string>
-    <string name="app_name3">ToolBag</string>
-    <string name="app_name4">ToolBag</string>
+    <string name="alarm">Warning</string>
+    <string name="compass">Compass</string>
+    <string name="gradienter">Gradienter</string>
+    <string name="handingpaint">Pic Hanging</string>
+    <string name="height_measure">HeightMeasure</string>
+    <string name="magnifier">Magnifier</string>
+    <string name="mirror">Mirror</string>
+    <string name="noise">SoundMeter</string>
+    <string name="plumb">Plumb Bob</string>
+    <string name="protractor">Protractor</string>
+    <string name="torch">Flashlight</string>
 </resources>

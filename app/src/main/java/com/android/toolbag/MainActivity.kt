@@ -5,9 +5,9 @@ import android.os.Build
 import android.os.Bundle
 import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import com.android.toolbag.widget.LineGridView
-import java.util.HashMap
 
 
 class MainActivity : AppCompatActivity() {
@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private var simpleAdapter: SimpleAdapter? = null
     private var stringName: Array<String>? = null
     private var lineGridView: LineGridView? = null
+    private var toolbar: Toolbar? = null
 
 
     @SuppressLint("Recycle")
@@ -28,6 +29,9 @@ class MainActivity : AppCompatActivity() {
             // 禁用导航栏对比度增强（防止出现半透明遮罩）
             window.isNavigationBarContrastEnforced = false
         }
+
+        toolbar = findViewById(R.id.toolbar)
+        setSupportActionBar(toolbar)
 
         lineGridView = findViewById(R.id.tools_app)
 
