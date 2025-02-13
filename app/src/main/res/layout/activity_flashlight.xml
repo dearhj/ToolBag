@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flash_blue"
+    android:fitsSystemWindows="true">
+
+
+    <ImageView
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="338dp"
+        android:layout_marginTop="230dp"
+        android:src="@drawable/ic_flash_light_body"
+        android:layout_centerHorizontal="true"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/light"
+        android:layout_width="wrap_content"
+        android:layout_height="260dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/ic_bright_light"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/button_on_off"
+        android:layout_width="50dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="320dp"
+        android:src="@drawable/ic_flash_off"
+        android:layout_centerHorizontal="true"
+        tools:ignore="ContentDescription" />
+
+    <ImageView
+        android:id="@+id/sos_button"
+        android:layout_width="200dp"
+        android:layout_height="100dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:src="@drawable/icon_sos_off"
+        tools:ignore="ContentDescription" />
+
+
+</RelativeLayout>

@@ -25,7 +25,7 @@ public class LineGridView extends GridView {
         // 获取子项总数
         int childCount = getChildCount();
         Paint paint = new Paint();
-        paint.setStrokeWidth(5.0f);
+        paint.setStrokeWidth(3.0f);
         paint.setStyle(Paint.Style.STROKE);
         paint.setColor(Color.GRAY);
         int lastLineCount = childCount % lineCount;
