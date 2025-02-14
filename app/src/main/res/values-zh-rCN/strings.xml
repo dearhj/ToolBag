@@ -11,4 +11,5 @@
     <string name="plumb">铅锤</string>
     <string name="protractor">量角器</string>
     <string name="torch">手电筒</string>
+    <string name="services_tip">欢迎使用工具箱！</string>
 </resources>

@@ -11,4 +11,5 @@
     <string name="plumb">Plumb Bob</string>
     <string name="protractor">Protractor</string>
     <string name="torch">Flashlight</string>
+    <string name="services_tip">Welcome to the ToolBag application!</string>
 </resources>

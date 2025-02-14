@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity() {
     private var toolbar: Toolbar? = null
 
 
-    @SuppressLint("Recycle")
+    @SuppressLint("Recycle", "NewApi")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
             // 禁用导航栏对比度增强（防止出现半透明遮罩）
             window.isNavigationBarContrastEnforced = false
         }
+
+        startForegroundService(Intent(this, LightControlService::class.java))
 
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)

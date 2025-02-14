@@ -1,7 +1,5 @@
 package com.android.toolbag.item
 
-import android.content.Context
-import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraManager.TorchCallback
 import android.media.AudioAttributes
 import android.media.SoundPool
@@ -9,22 +7,25 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.provider.Settings
 import android.view.View
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.android.toolbag.App.Companion.cameraManager
 import com.android.toolbag.R
 
 
 class FlashlightActivity : AppCompatActivity() {
-    private var cameraManager: CameraManager? = null
     private var torchCallback: MyTorchCallback? = null
     private var torchStatus = false
     private var flashLightButton: ImageView? = null
     private var flashLight: ImageView? = null
+    private var flashSosLightButton: ImageView? = null
     private var mSoundPool: SoundPool? = null
     private var mVoiceId = 0
     private var lastChangeTime = 0L
+    private var sosStatus = "off"
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,29 +38,65 @@ class FlashlightActivity : AppCompatActivity() {
         }
         flashLightButton = findViewById(R.id.button_on_off)
         flashLight = findViewById(R.id.light)
+        flashSosLightButton = findViewById(R.id.sos_button)
         mSoundPool = null
+
+        sosStatus = Settings.Global.getString(contentResolver, "flashLight_sos") ?: "off"
 
         torchCallback = MyTorchCallback {
             if (System.currentTimeMillis() - lastChangeTime > 100) {
                 lastChangeTime = System.currentTimeMillis()
-                torchStatus = it
-                if (it) {
-                    flashLightButton?.setImageResource(R.drawable.ic_flash_on)
-                    flashLight?.visibility = View.VISIBLE
-                } else {
-                    flashLightButton?.setImageResource(R.drawable.ic_flash_off)
-                    flashLight?.visibility = View.GONE
+                if ("off" == sosStatus) { //非SOS情况
+                    torchStatus = it
+                    if (it) {
+                        flashLightButton?.setImageResource(R.drawable.ic_flash_on)
+                        flashLight?.visibility = View.VISIBLE
+                        Settings.Global.putString(contentResolver, "flashLight_normal", "on")
+                    } else {
+                        flashLightButton?.setImageResource(R.drawable.ic_flash_off)
+                        flashLight?.visibility = View.GONE
+                        Settings.Global.putString(contentResolver, "flashLight_normal", "off")
+                    }
                 }
             }
         }
-        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
         cameraManager?.registerTorchCallback(torchCallback!!, Handler(Looper.getMainLooper()))
         flashLightButton?.setOnClickListener {
-            if (torchStatus) cameraManager?.setTorchMode("0", false)
-            else cameraManager?.setTorchMode("0", true)
+            if (sosStatus == "off") {
+                if (torchStatus) cameraManager?.setTorchMode("0", false)
+                else cameraManager?.setTorchMode("0", true)
+            }
             playSoundEffect()
         }
+        flashSosLightButton?.setOnClickListener {
+            if (sosStatus == "off") {
+                flashSosLightButton?.setImageResource(R.drawable.icon_sos_on)
+                flashLightButton?.setImageResource(R.drawable.ic_flash_off)
+                flashLight?.visibility = View.VISIBLE
+                Settings.Global.putString(contentResolver, "flashLight_sos", "on")
+                sosStatus = "on"
+            } else {
+                flashSosLightButton?.setImageResource(R.drawable.icon_sos_off)
+                flashLight?.visibility = View.GONE
+                Settings.Global.putString(contentResolver, "flashLight_sos", "off")
+                sosStatus = "off"
+            }
+            playSoundEffect()
+        }
+    }
 
+    override fun onResume() {
+        super.onResume()
+        sosStatus = Settings.Global.getString(contentResolver, "flashLight_sos") ?: "off"
+        if (sosStatus == "off") {
+            flashSosLightButton?.setImageResource(R.drawable.icon_sos_off)
+            if ((Settings.Global.getString(contentResolver, "flashLight_normal") ?: "off") == "off")
+                flashLight?.visibility = View.GONE
+            else flashLight?.visibility = View.VISIBLE
+        } else {
+            flashSosLightButton?.setImageResource(R.drawable.icon_sos_on)
+            flashLight?.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroy() {

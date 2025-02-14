@@ -9,9 +9,11 @@
     <uses-feature
         android:name="android.hardware.camera.autofocus"
         android:required="true" />
+
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,10 +22,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransparentNavigationBar"
         tools:targetApi="31">
+        <service
+            android:name=".LightControlService"
+            android:enabled="true"
+            android:exported="true"
+            android:foregroundServiceType="camera"
+            tools:ignore="ForegroundServicePermission" />
+
         <activity
             android:name=".item.FlashlightActivity"
-            android:screenOrientation="portrait"
             android:exported="false"
+            android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".MainActivity"
