@@ -12,4 +12,7 @@
     <string name="protractor">Protractor</string>
     <string name="torch">Flashlight</string>
     <string name="services_tip">Welcome to the ToolBag application!</string>
+    <string name="flashlight">Flash Light</string>
+    <string name="alarming">Alarm Bell</string>
+    <string name="screen_flash">Alarm Lamp</string>
 </resources>

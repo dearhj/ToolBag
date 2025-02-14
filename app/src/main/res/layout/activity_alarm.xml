@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/flash_blue"
+    android:fitsSystemWindows="true">
+
+    <FrameLayout
+        android:id="@+id/top_half"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/flash_blue"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_half"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/bottom_half"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@color/flash_blue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/top_half" />
+
+    <FrameLayout
+        android:id="@+id/top_half_land"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/flash_blue"
+        app:layout_constraintRight_toLeftOf="@+id/bottom_half_land"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/bottom_half_land"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@color/flash_blue"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/top_half_land" />
+
+    <LinearLayout
+        android:id="@+id/flash"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/sound"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/flashImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/btn_flashlight_one"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/flashlight"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <!-- 第二个 LinearLayout -->
+    <LinearLayout
+        android:id="@+id/sound"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/light"
+        app:layout_constraintTop_toBottomOf="@+id/flash">
+
+        <ImageView
+            android:id="@+id/soundImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/btn_alarmring_one"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/alarming"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/light"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sound">
+
+        <ImageView
+            android:id="@+id/lightImage"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:src="@drawable/btn_screenflash_one"
+            tools:ignore="MissingConstraints" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="10dp"
+            android:text="@string/screen_flash"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

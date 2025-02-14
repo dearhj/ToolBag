@@ -12,4 +12,7 @@
     <string name="protractor">量角器</string>
     <string name="torch">手电筒</string>
     <string name="services_tip">欢迎使用工具箱！</string>
+    <string name="flashlight">闪灯</string>
+    <string name="alarming">警报</string>
+    <string name="screen_flash">警灯</string>
 </resources>
