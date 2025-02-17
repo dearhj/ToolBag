@@ -152,6 +152,26 @@ class AlarmActivity : AppCompatActivity() {
                         halfTopLand?.setBackgroundColor(Color.RED)
                         halfBottom?.setBackgroundColor(Color.BLACK)
                         halfBottomLand?.setBackgroundColor(Color.BLACK)
+                        delay(50)
+                        halfTop?.setBackgroundColor(Color.BLACK)
+                        halfTopLand?.setBackgroundColor(Color.BLACK)
+                        delay(50)
+                    }
+                    for (i in 1..4) {
+                        halfTop?.setBackgroundColor(Color.BLACK)
+                        halfTopLand?.setBackgroundColor(Color.BLACK)
+                        halfBottom?.setBackgroundColor(Color.BLUE)
+                        halfBottomLand?.setBackgroundColor(Color.BLUE)
+                        delay(50)
+                        halfBottom?.setBackgroundColor(Color.BLACK)
+                        halfBottomLand?.setBackgroundColor(Color.BLACK)
+                        delay(50)
+                    }
+                    for (i in 1..4) {
+                        halfTop?.setBackgroundColor(Color.RED)
+                        halfTopLand?.setBackgroundColor(Color.RED)
+                        halfBottom?.setBackgroundColor(Color.BLACK)
+                        halfBottomLand?.setBackgroundColor(Color.BLACK)
                         delay(100)
                         halfTop?.setBackgroundColor(Color.BLACK)
                         halfTopLand?.setBackgroundColor(Color.BLACK)
