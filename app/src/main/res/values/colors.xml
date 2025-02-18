@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="flash_blue">#FF414378</color>
+    <color name="sound_value1">#FF00FF00</color>
+    <color name="sound_value2">#FF83F143</color>
+    <color name="sound_value3">#FFE3F447</color>
+    <color name="sound_value4">#FFE33314</color>
+    <color name="sound_value5">#FFFF0000</color>
 </resources>

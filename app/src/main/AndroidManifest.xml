@@ -11,6 +11,17 @@
         android:required="true" />
 
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
 
     <application
         android:name=".App"
@@ -22,6 +33,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TransparentNavigationBar"
         tools:targetApi="31">
+        <activity
+            android:name=".item.NoiseActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
         <activity
             android:name=".item.AlarmActivity"
             android:configChanges="orientation|screenSize"

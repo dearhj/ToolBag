@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import com.android.toolbag.item.AlarmActivity
 import com.android.toolbag.item.FlashlightActivity
+import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.widget.LineGridView
 
 
@@ -80,7 +81,8 @@ class MainActivity : AppCompatActivity() {
                 println("打开铅锤")
             }
             getString(R.string.noise) -> {
-                println("打开噪音测试")
+                val intent = Intent(this, NoiseActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.magnifier) -> {
                 println("打开放大镜")

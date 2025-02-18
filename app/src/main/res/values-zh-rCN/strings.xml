@@ -15,4 +15,10 @@
     <string name="flashlight">闪灯</string>
     <string name="alarming">警报</string>
     <string name="screen_flash">警灯</string>
+    <string name="volume_size_name1">非常安静的环境(000db-045db)</string>
+    <string name="volume_size_name2">普通的室内谈话(045db-060db)</string>
+    <string name="volume_size_name3">嘈杂的工作环境(060db-080db)</string>
+    <string name="volume_size_name4">神经细胞被破坏(080db-115db)</string>
+    <string name="volume_size_name5">您最好赶紧离开(115db-140db)</string>
+    <string name="test_fail">噪音测试初始化失败</string>
 </resources>
