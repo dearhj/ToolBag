@@ -21,4 +21,14 @@
     <string name="volume_size_name4">Harmful noise(80db-115db)</string>
     <string name="volume_size_name5">Extremely harmful noise(115db-140db)</string>
     <string name="test_fail">Noise test initialization failed</string>
+    <string name="south">South</string>
+    <string name="east">East</string>
+    <string name="north">North</string>
+    <string name="west">West</string>
+    <string name="east_north">Northeast</string>
+    <string name="east_south">Southeast</string>
+    <string name="west_south">Southwest</string>
+    <string name="west_north">Northwest</string>
+    <string name="please_calibration">Please shake the device to calibrate the compass</string>
+    <string name="calibration_success">Calibration Successful</string>
 </resources>

@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
 import com.android.toolbag.item.AlarmActivity
+import com.android.toolbag.item.CompassActivity
 import com.android.toolbag.item.FlashlightActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.widget.LineGridView
@@ -97,7 +98,8 @@ class MainActivity : AppCompatActivity() {
                 println("打开水平仪")
             }
             getString(R.string.compass) -> {
-                println("打开指南针")
+                val intent = Intent(this, CompassActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.alarm) -> {
                 val intent = Intent(this, AlarmActivity::class.java)
