@@ -8,4 +8,8 @@
     <color name="sound_value3">#FFE3F447</color>
     <color name="sound_value4">#FFE33314</color>
     <color name="sound_value5">#FFFF0000</color>
+    <color name="color_circle_1">#FFBBBBBB</color>
+    <color name="color_circle_2">#FFC4C4C4</color>
+    <color name="color_circle_3">#FFD1D1D1</color>
+    <color name="color_circle_4">#FFE4E4E4</color>
 </resources>

@@ -31,4 +31,6 @@
     <string name="west_north">Northwest</string>
     <string name="please_calibration">Please shake the device to calibrate the compass</string>
     <string name="calibration_success">Calibration Successful</string>
+    <string name="vertical">Vertical</string>
+    <string name="horizontal">Horizontal</string>
 </resources>

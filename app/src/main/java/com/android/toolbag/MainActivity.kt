@@ -12,6 +12,7 @@ import androidx.core.view.WindowCompat
 import com.android.toolbag.item.AlarmActivity
 import com.android.toolbag.item.CompassActivity
 import com.android.toolbag.item.FlashlightActivity
+import com.android.toolbag.item.GradientActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.widget.LineGridView
 
@@ -95,7 +96,8 @@ class MainActivity : AppCompatActivity() {
                 println("打开挂画")
             }
             getString(R.string.gradienter) -> {
-                println("打开水平仪")
+                val intent = Intent(this, GradientActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.compass) -> {
                 val intent = Intent(this, CompassActivity::class.java)

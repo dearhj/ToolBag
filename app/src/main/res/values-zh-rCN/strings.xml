@@ -31,4 +31,6 @@
     <string name="west_north">西北</string>
     <string name="please_calibration">请晃动设备来校准指南针</string>
     <string name="calibration_success">校准成功</string>
+    <string name="vertical">垂直</string>
+    <string name="horizontal">水平</string>
 </resources>
