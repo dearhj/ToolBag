@@ -7,7 +7,7 @@
 
     <style name="Theme.ToolBag" parent="Base.Theme.ToolBag" />
 
-    <style name="Theme.TransparentNavigationBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.TransparentNavigationBar" parent="Theme.MaterialComponents.DayNight.NoActionBar.Bridge">
         <!-- 设置状态栏和导航栏颜色为透明 -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>

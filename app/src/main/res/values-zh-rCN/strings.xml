@@ -33,4 +33,17 @@
     <string name="calibration_success">校准成功</string>
     <string name="vertical">垂直</string>
     <string name="horizontal">水平</string>
+    <string name="first_step_tips">第一步：输入您的身高(单位:cm)</string>
+    <string name="second_step_tips">第二步：确保被测物底端与您处于同一水平面上，然后站直，将眼睛、设备与被测物的底端形成一条直线。对准后，点击屏幕的任意位置，如操作成功，设备将短暂震动一下，否则将短暂震动两下。</string>
+    <string name="last_step_tips">第三步：人站直后，将眼睛、设备与被测物的顶端形成一条直线。对准后，再次点击屏幕的任意位置，如操作成功，设备将短暂震动一下，否则将短暂震动两下。</string>
+    <string name="input_height_tips">请输入您的身高(单位:cm)</string>
+    <string name="target_height">目标高度</string>
+    <string name="your_height">身高</string>
+    <string name="high_point_angle">仰角角度</string>
+    <string name="low_point_angel">俯角角度</string>
+    <string name="target_distance">目标距离</string>
+    <string name="start_measure">开始测量</string>
+    <string name="next_measure">下一步</string>
+    <string name="again_measure">重新测量</string>
+
 </resources>

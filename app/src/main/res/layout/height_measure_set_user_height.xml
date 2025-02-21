@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/set_user_height"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:paddingLeft="30dp"
+    android:paddingRight="30dp"
+    android:background="@color/flash_blue"
+    android:visibility="gone">
+
+    <TextView
+        android:id="@+id/text_hint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/rl_NumberPicker_container"
+        android:layout_marginBottom="30dp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:text="@string/input_height_tips"
+        android:textSize="18dp" />
+
+    <RelativeLayout
+        android:id="@+id/rl_NumberPicker_container"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:layout_centerInParent="true"
+        android:gravity="center">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="40dp"
+            android:background="@color/color_circle_1" />
+
+        <LinearLayout
+            android:id="@+id/ll_NumberPicker_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_weight="0.3"
+                android:background="@android:color/transparent" />
+
+            <com.android.toolbag.widget.CustomNumberPicker
+                android:id="@+id/first_number"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="5dp"
+                android:selectionDividerHeight="0dp" />
+
+            <com.android.toolbag.widget.CustomNumberPicker
+                android:id="@+id/second_number"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:selectionDividerHeight="0dp" />
+
+            <com.android.toolbag.widget.CustomNumberPicker
+                android:id="@+id/last_number"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:paddingLeft="20dp"
+                android:selectionDividerHeight="0dp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.3"
+                android:gravity="center"
+                android:lines="1"
+                android:text="cm"
+                android:textColor="@color/sound_value1" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="40dp"
+            android:background="@color/color_circle_1" />
+    </RelativeLayout>
+</RelativeLayout>

@@ -33,4 +33,16 @@
     <string name="calibration_success">Calibration Successful</string>
     <string name="vertical">Vertical</string>
     <string name="horizontal">Horizontal</string>
+    <string name="first_step_tips">Step 1: Enter your height(cm)</string>
+    <string name="second_step_tips">Step 2: Ensure that the bottom of the object being tested is on the same horizontal plane as you, then stand straight and align your eyes, equipment, and the bottom of the object being tested in a straight line. After alignment, click on any position on the screen. If the operation is successful, the device will vibrate briefly. Otherwise, it will vibrate briefly twice.</string>
+    <string name="last_step_tips">Step 3: After the person stands straight, form a straight line between their eyes, equipment, and the top of the object being measured. After alignment, click on any position on the screen again. If the operation is successful, the device will vibrate briefly. Otherwise, it will vibrate briefly twice.</string>
+    <string name="input_height_tips">Please enter your height (cm)</string>
+    <string name="target_height">Target Height</string>
+    <string name="your_height">Your Height</string>
+    <string name="high_point_angle">Elevation Angle</string>
+    <string name="low_point_angel">Prone Angle</string>
+    <string name="target_distance">Target Distance</string>
+    <string name="start_measure">Start Measure</string>
+    <string name="next_measure">NEXT</string>
+    <string name="again_measure">REMEASURE</string>
 </resources>

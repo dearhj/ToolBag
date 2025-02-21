@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="@color/flash_blue"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/main_FrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="7"
+        android:paddingTop="30dp">
+
+        <include layout="@layout/height_measure_layout" />
+
+        <include layout="@layout/height_measure_set_user_height" />
+
+        <include layout="@layout/height_measure_target" />
+
+        <include layout="@layout/height_measure_result" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/common_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:gravity="center"
+        android:paddingBottom="10dp">
+
+        <Button
+            android:id="@+id/start"
+            android:layout_width="240dp"
+            android:layout_height="40dp"
+            android:background="@drawable/start_button_background"
+            android:gravity="center"
+            android:text="@string/start_measure"
+            android:textSize="15dp" />
+    </LinearLayout>
+</LinearLayout>
