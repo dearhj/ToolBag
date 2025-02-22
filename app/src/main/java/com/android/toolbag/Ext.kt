@@ -1,9 +1,14 @@
 package com.android.toolbag
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.database.ContentObserver
 import android.net.Uri
 import android.provider.Settings
+import android.view.Gravity
+import android.widget.TextView
+import android.widget.Toast
 import java.io.File
 import java.io.IOException
 
@@ -46,4 +51,19 @@ fun createFile(fileName: String): File? {
         e.printStackTrace()
         return null
     }
+}
+
+var toast: Toast? = null
+@SuppressLint("InflateParams")
+fun customToast(activity: Activity, str: String) {
+    val inflater = activity.layoutInflater
+    val layout = inflater.inflate(R.layout.custom_toast, null)
+    val textView = layout.findViewById<TextView>(R.id.toast_text)
+    textView.text = str
+    if (toast != null) toast?.cancel()
+    toast = Toast(App.mContext)
+    toast?.view = layout
+    toast?.duration = Toast.LENGTH_SHORT
+    toast?.setGravity(Gravity.CENTER, 0, 0)
+    toast?.show()
 }

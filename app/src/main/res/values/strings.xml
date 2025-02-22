@@ -45,4 +45,7 @@
     <string name="start_measure">Start Measure</string>
     <string name="next_measure">NEXT</string>
     <string name="again_measure">REMEASURE</string>
+    <string name="fail_1">Please follow the method shown in the diagram to make the device perpendicular to the horizontal plane and try again!</string>
+    <string name="fail_2">Please adjust the device direction according to the diagram, ensuring that the top of the device is close to the eye side!</string>
+    <string name="fail_3">Please follow the method shown in the diagram to ensure that the eyes, equipment, and the top of the object being measured are on the same straight line!</string>
 </resources>
