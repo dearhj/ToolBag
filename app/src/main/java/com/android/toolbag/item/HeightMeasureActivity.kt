@@ -166,7 +166,7 @@ class HeightMeasureActivity : AppCompatActivity(), SensorEventListener {
         //监听返回键。
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                if (uiStatus == 0) finish()
+                if (uiStatus == 0 || uiStatus == 3) finish()
                 else {
                     uiStatus--
                     updateUI(uiStatus, true)
