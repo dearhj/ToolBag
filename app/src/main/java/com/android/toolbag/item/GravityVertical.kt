@@ -24,6 +24,13 @@ import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.toolbag.R
+import java.math.BigDecimal
+import java.math.RoundingMode
+import android.graphics.*
+import android.widget.ImageView
+import android.widget.TextView
+import kotlin.math.abs
+import kotlin.math.round
 
 
 class GravityVertical : AppCompatActivity(), SensorEventListener {
@@ -41,7 +48,16 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
     private var mAccelerometerSensor: Sensor? = null
     private var mSensorManager: SensorManager? = null
 
+    private var rect: Rect? = null
     private var aspectRatioScreen = 0f
+    private var imageView: ImageView? = null
+    private var textView: TextView? = null
+    private var bitmap: Bitmap? = null
+
+    private val alpha: Float = 0.8f // 低通滤波器的系数
+    private var lastX: Float = 0f
+    private var lastY: Float = 0f
+    private var lastZ: Float = 0f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,10 +69,10 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
-        val rect = Rect()
+        rect = Rect()
         window.decorView.getWindowVisibleDisplayFrame(rect)
-        aspectRatioScreen = rect.width().toFloat() / rect.height().toFloat()
-        println("这里的宽高比是？？？   $aspectRatioScreen    ${rect.width()}    ${rect.height()}")
+        aspectRatioScreen = rect!!.width().toFloat() / rect!!.height().toFloat()
+        println("屏幕宽高比？   $aspectRatioScreen    ${rect!!.width()}    ${rect!!.height()}")
 
         surfaceView = findViewById(R.id.camera_layout)
         mCameraManager = getSystemService(CameraManager::class.java)
@@ -68,6 +84,10 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
 
         backHomeButton = findViewById(R.id.btn_home)
         backHomeButton?.setOnClickListener { finish() }
+
+        imageView = findViewById(R.id.plumb_point_img)
+        textView = findViewById(R.id.vertical_degree)
+        bitmap = BitmapFactory.decodeResource(resources, R.drawable.plumb_point)
 
         try {
             surfaceHolder = surfaceView?.holder
@@ -110,17 +130,35 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
         mSensorManager?.unregisterListener(this)
     }
 
+    @SuppressLint("DefaultLocale")
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0] // X轴加速度
             val y = event.values[1] // Y轴加速度
             val z = event.values[2] // Z轴加速度
 
-            val roll1 = Math.toDegrees(Math.atan2(y.toDouble(), z.toDouble())).toFloat()
+            // 应用低通滤波器
+            val filteredX = alpha * lastX + (1 - alpha) * x
+            val filteredY = alpha * lastY + (1 - alpha) * y
+            val filteredZ = alpha * lastZ + (1 - alpha) * z
 
-            println("这里的度数是？？？     $roll1    ￥ $x    $y   $z")
+            lastX = filteredX
+            lastY = filteredY
+            lastZ = filteredZ
 
+            val roll = Math.toDegrees(Math.atan2(lastY.toDouble(), lastX.toDouble())).toFloat()
+            val bigDecimal = BigDecimal(roll.toString())
+            val roundedValue = bigDecimal.setScale(1, RoundingMode.HALF_UP).toFloat()
+            updateUI(roundedValue)
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateUI(angle: Float) {
+        imageView!!.pivotX = imageView!!.width.toFloat() / 2
+        imageView!!.pivotY = 0.0f
+        imageView!!.rotation = -angle
+        textView?.text = round(abs(angle)).toInt().toString() + "°"
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
@@ -140,9 +178,6 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
             val list =
                 map!!.getOutputSizes(SurfaceTexture::class.java)!!.sortedByDescending { it.width }
             for (size in list) {
-                println("这里的宽为： ${size.width}    高为：  ${size.height}    宽高比为 ${size.width.toFloat() / size.height.toFloat()}")
-            }
-            for (size in list) {
                 val aspectRatioCamera = size.width.toFloat() / size.height.toFloat()
                 if (aspectRatioScreen >= 1 && aspectRatioScreen < 1.5) {
                     if (aspectRatioCamera >= 1 && aspectRatioCamera < 1.5) {
@@ -161,7 +196,7 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
                     }
                 }
             }
-            println("这里的预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}   ${previewSizes!!.width.toFloat() / previewSizes!!.height.toFloat()}")
+            println("这里的预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}")
 
             //打开摄像头
             mCameraManager?.openCamera(
@@ -179,7 +214,6 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
      */
     private fun closeCamera() {
         try {
-            println("这里关闭了相机")
             //关闭相机
             if (cameraDevice != null) {
                 cameraDevice?.close()
