@@ -16,6 +16,7 @@ import com.android.toolbag.item.GradientActivity
 import com.android.toolbag.item.GravityVertical
 import com.android.toolbag.item.HeightMeasureActivity
 import com.android.toolbag.item.NoiseActivity
+import com.android.toolbag.item.PaintingActivity
 import com.android.toolbag.widget.LineGridView
 
 
@@ -97,7 +98,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             getString(R.string.handingpaint) -> {
-                println("打开挂画")
+                val intent = Intent(this, PaintingActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.gradienter) -> {
                 val intent = Intent(this, GradientActivity::class.java)

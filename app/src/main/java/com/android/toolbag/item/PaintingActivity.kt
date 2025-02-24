@@ -22,20 +22,19 @@ import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.View
 import android.widget.ImageButton
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.android.toolbag.R
+import com.android.toolbag.widget.AlignmentView
 import java.math.BigDecimal
 import java.math.RoundingMode
-import android.widget.ImageView
-import android.widget.TextView
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.round
 
-
-class GravityVertical : AppCompatActivity(), SensorEventListener {
+class PaintingActivity : AppCompatActivity(), SensorEventListener {
     private var surfaceView: SurfaceView? = null
     private var mCameraManager: CameraManager? = null
     private var surfaceHolder: SurfaceHolder? = null
@@ -52,8 +51,9 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
 
     private var rect: Rect? = null
     private var aspectRatioScreen = 0f
-    private var imageView: ImageView? = null
-    private var textView: TextView? = null
+    private var textViewV: TextView? = null
+    private var textViewH: TextView? = null
+    private var alignmentView: AlignmentView? = null
 
     private val alpha: Float = 0.8f // 低通滤波器的系数
     private var lastX: Float = 0f
@@ -62,7 +62,7 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_gravity_vertical)
+        setContentView(R.layout.activity_painting)
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -88,8 +88,9 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
         backHomeButton = findViewById(R.id.btn_home)
         backHomeButton?.setOnClickListener { finish() }
 
-        imageView = findViewById(R.id.plumb_point_img)
-        textView = findViewById(R.id.vertical_degree)
+        textViewV = findViewById(R.id.vertical_degree)
+        textViewH = findViewById(R.id.horizontal_degree)
+        alignmentView = findViewById(R.id.alignmentView)
 
         try {
             surfaceHolder = surfaceView?.holder
@@ -132,7 +133,6 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
         mSensorManager?.unregisterListener(this)
     }
 
-    @SuppressLint("DefaultLocale")
     override fun onSensorChanged(event: SensorEvent?) {
         if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
             val x = event.values[0] // X轴加速度
@@ -155,16 +155,14 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun updateUI(angle: Float) {
-        imageView!!.pivotX = imageView!!.width.toFloat() / 2
-        imageView!!.pivotY = 0.0f
-        imageView!!.rotation = -angle
-        textView?.text = round(abs(angle)).toInt().toString() + "°"
+    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
     }
 
-    override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
-        //加速度传感器无须校准
+    @SuppressLint("SetTextI18n")
+    private fun updateUI(angle: Float) {
+        alignmentView?.setDegree(-angle)
+        textViewH?.text = round(abs(angle)).toInt().toString() + "°"
+        textViewV?.text = (90 - round(abs(angle)).toInt()).toString() + "°"
     }
 
     @SuppressLint("MissingPermission")
