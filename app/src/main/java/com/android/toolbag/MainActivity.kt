@@ -13,6 +13,7 @@ import com.android.toolbag.item.AlarmActivity
 import com.android.toolbag.item.CompassActivity
 import com.android.toolbag.item.FlashlightActivity
 import com.android.toolbag.item.GradientActivity
+import com.android.toolbag.item.GravityVertical
 import com.android.toolbag.item.HeightMeasureActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.widget.LineGridView
@@ -81,7 +82,8 @@ class MainActivity : AppCompatActivity() {
                 println("打开量角器")
             }
             getString(R.string.plumb) -> {
-                println("打开铅锤")
+                val intent = Intent(this, GravityVertical::class.java)
+                startActivity(intent)
             }
             getString(R.string.noise) -> {
                 val intent = Intent(this, NoiseActivity::class.java)

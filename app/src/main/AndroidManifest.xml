@@ -36,6 +36,10 @@
         android:theme="@style/Theme.TransparentNavigationBar"
         tools:targetApi="31">
         <activity
+            android:name=".item.GravityVertical"
+            android:screenOrientation="landscape"
+            android:exported="false" />
+        <activity
             android:name=".item.HeightMeasureActivity"
             android:configChanges="orientation|screenSize"
             android:exported="false" />
