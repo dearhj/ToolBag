@@ -1,0 +1,6 @@
+<resources>
+    <dimen name="configs_compute_bounds">10dp</dimen>
+    <dimen name="configs_protractor_textSize">25sp</dimen>
+    <dimen name="protractor_text_marginTop">50sp</dimen>
+    <dimen name="protractor_text_marginLeft">50sp</dimen>
+</resources>

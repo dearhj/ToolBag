@@ -17,6 +17,7 @@ import com.android.toolbag.item.GravityVertical
 import com.android.toolbag.item.HeightMeasureActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.item.PaintingActivity
+import com.android.toolbag.item.ProtractorActivity
 import com.android.toolbag.widget.LineGridView
 
 
@@ -80,7 +81,8 @@ class MainActivity : AppCompatActivity() {
                  startActivity(intent)
             }
             getString(R.string.protractor) -> {
-                println("打开量角器")
+                val intent = Intent(this, ProtractorActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.plumb) -> {
                 val intent = Intent(this, GravityVertical::class.java)
