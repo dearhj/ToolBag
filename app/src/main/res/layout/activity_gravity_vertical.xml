@@ -69,12 +69,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|start"
-        android:padding="25dp">
+        android:padding="40dp">
 
         <ImageButton
             android:id="@+id/btn_home"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/btn_home"
             android:importantForAccessibility="no" />
     </FrameLayout>
