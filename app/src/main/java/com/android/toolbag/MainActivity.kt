@@ -15,6 +15,7 @@ import com.android.toolbag.item.FlashlightActivity
 import com.android.toolbag.item.GradientActivity
 import com.android.toolbag.item.GravityVertical
 import com.android.toolbag.item.HeightMeasureActivity
+import com.android.toolbag.item.MagnifierActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.item.PaintingActivity
 import com.android.toolbag.item.ProtractorActivity
@@ -93,7 +94,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             getString(R.string.magnifier) -> {
-                println("打开放大镜")
+                val intent = Intent(this, MagnifierActivity::class.java)
+                startActivity(intent)
             }
             getString(R.string.height_measure) -> {
                 val intent = Intent(this, HeightMeasureActivity::class.java)

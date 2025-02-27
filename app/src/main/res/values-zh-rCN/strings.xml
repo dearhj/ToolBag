@@ -47,6 +47,9 @@
     <string name="again_measure">重新测量</string>
     <string name="vertical1">竖直：</string>
     <string name="horizontal1">水平：</string>
+    <string name="cannot_find_back">没有找到后置摄像头</string>
+    <string name="cannot_find_front">没有找到前置摄像头</string>
+    <string name="not_support_flash">此摄像头不支持闪光灯</string>
     <string name="fail_1">请按图示方法，将设备垂直于水平面后再次尝试！</string>
     <string name="fail_2">请按图示调整设备方向，确保设备顶部靠近眼睛一侧！</string>
     <string name="fail_3">请按图示方法，确保眼睛、设备、被测物顶端位于同一直线上！</string>

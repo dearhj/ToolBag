@@ -47,6 +47,9 @@
     <string name="again_measure">REMEASURE</string>
     <string name="vertical1">Vertical：</string>
     <string name="horizontal1">Horizontal：</string>
+    <string name="cannot_find_back">Rear camera not found</string>
+    <string name="cannot_find_front">Front camera not found</string>
+    <string name="not_support_flash">This camera does not support flash</string>
     <string name="fail_1">Please follow the method shown in the diagram to make the device perpendicular to the horizontal plane and try again!</string>
     <string name="fail_2">Please adjust the device direction according to the diagram, ensuring that the top of the device is close to the eye side!</string>
     <string name="fail_3">Please follow the method shown in the diagram to ensure that the eyes, equipment, and the top of the object being measured are on the same straight line!</string>
