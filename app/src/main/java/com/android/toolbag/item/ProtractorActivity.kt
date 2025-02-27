@@ -106,28 +106,12 @@ class ProtractorActivity : AppCompatActivity() {
             val list =
                 map!!.getOutputSizes(SurfaceTexture::class.java)!!.sortedByDescending { it.width }
             for (size in list) {
+                if (size.width > 6000) continue //分辨率过大，使用textureView预览会有卡顿现象
                 val aspectRatioCamera = size.width.toFloat() / size.height.toFloat()
-                if (aspectRatioScreen >= 1 && aspectRatioScreen < 1.5) {
-                    if (aspectRatioCamera >= 1 && aspectRatioCamera < 1.5) {
-                        //同一区间内,优先选择屏幕宽高比大于预览宽高比的,较小的宽高比可以确保优先铺满垂直方向
-                        if (aspectRatioScreen >= aspectRatioCamera) {
-                            previewSizes = size
-                            break
-                        }
-                    }
-                } else if (aspectRatioScreen >= 1.5 && aspectRatioScreen < 2) {
-                    if (aspectRatioCamera >= 1.5 && aspectRatioCamera < 2) {
-                        if (aspectRatioScreen >= aspectRatioCamera) {
-                            previewSizes = size
-                            break
-                        }
-                    }
-                } else if (aspectRatioScreen >= 2) {
-                    if (aspectRatioCamera >= 2) {
-                        if (aspectRatioScreen >= aspectRatioCamera) {
-                            previewSizes = size
-                            break
-                        }
+                if (aspectRatioScreen - 0.25 <= aspectRatioCamera && aspectRatioCamera <= aspectRatioScreen + 0.25) {
+                    if (aspectRatioScreen >= aspectRatioCamera) {
+                        previewSizes = size
+                        break
                     }
                 }
             }
