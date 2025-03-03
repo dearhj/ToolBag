@@ -139,6 +139,7 @@ class CompassActivity : AppCompatActivity(), SensorEventListener {
                     val orientation = FloatArray(3)
                     SensorManager.getOrientation(rotationMatrix, orientation)
                     azimuth = Math.toDegrees(orientation[0].toDouble()).toFloat() // 方位角
+                    azimuth = (azimuth + 360) % 360
                     adjustArrow()
                 }
             }
