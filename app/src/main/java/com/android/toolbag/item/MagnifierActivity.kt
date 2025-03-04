@@ -11,11 +11,13 @@ import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Range
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.SeekBar
 import androidx.annotation.RequiresApi
@@ -23,8 +25,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.android.toolbag.R
 import com.android.toolbag.customToast
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
+
 
 class MagnifierActivity : AppCompatActivity() {
     private var textureView: TextureView? = null
@@ -37,8 +41,8 @@ class MagnifierActivity : AppCompatActivity() {
     private var cameraDevice: CameraDevice? = null
     private var previewBuilder: CaptureRequest.Builder? = null
     private var cameraCaptureSession: CameraCaptureSession? = null
-    private var rect: Rect? = null
-    private var aspectRatioScreen = 0f
+    private var screenWidth = 0
+    private var screenHeight = 0
     private var previewSizes: Size? = null
     private var zoomRect: Rect? = null
     private var flashAvailable = false
@@ -73,12 +77,17 @@ class MagnifierActivity : AppCompatActivity() {
         minusButton = findViewById(R.id.ic_seekbar_down)
         seekBar = findViewById(R.id.ic_seekbar)
 
-        rect = Rect()
-        window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenWidth = min(rect!!.width(), rect!!.height())
-        val screenHeight = max(rect!!.width(), rect!!.height())
-        aspectRatioScreen = screenHeight.toFloat() / screenWidth.toFloat()
-        println("屏幕高宽比是？   $aspectRatioScreen    $screenWidth    $screenHeight")
+        val defaultDisplay =
+            (getSystemService("window") as WindowManager).defaultDisplay
+        val displayMetrics = DisplayMetrics()
+        defaultDisplay.getRealMetrics(displayMetrics)
+        screenWidth =
+            max(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        screenHeight =
+            min(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        println("屏幕高宽比是？   ${screenWidth / screenHeight.toFloat()}    $screenWidth    $screenHeight")
 
 
         textureView = findViewById(R.id.preview_surface)
@@ -205,6 +214,27 @@ class MagnifierActivity : AppCompatActivity() {
         closeCamera()
     }
 
+    private fun getOptimalSize(sizeArr: Array<Size>, width: Int, height: Int): Size? {
+        var d = (width / height).toDouble()
+        if (d > 2.0) {
+            d = 2.0
+        }
+        var d2 = Double.MAX_VALUE
+        var size: Size? = null
+        val sizeList = sizeArr.sortedByDescending { it.width }
+        for (size2 in sizeList) {
+            if (abs((size2.width / size2.height) - d) <= 0.02) {
+                val abs = abs((size2.height - height).toDouble())
+                if (abs <= d2) {
+                    size = size2
+                    d2 = abs
+                }
+            }
+        }
+        return size
+    }
+
+
     private fun updateCameraPreview() {
         if (cameraDevice != null && previewBuilder != null) {
             zoomRect = getZoomRect(currentZoomLevel)
@@ -300,19 +330,14 @@ class MagnifierActivity : AppCompatActivity() {
                 cameraCharacteristics.get(CameraCharacteristics.SCALER_AVAILABLE_MAX_DIGITAL_ZOOM)!!
 
             val list =
-                map!!.getOutputSizes(SurfaceTexture::class.java)!!.sortedByDescending { it.width }
-            for (size in list) {
-                if (size.width > 6000) continue //分辨率过大，使用textureView预览会有卡顿现象
-                val aspectRatioCamera = size.width.toFloat() / size.height.toFloat()
-                if (aspectRatioScreen - 0.25 <= aspectRatioCamera && aspectRatioCamera <= aspectRatioScreen + 0.25) {
-                    if (aspectRatioScreen >= aspectRatioCamera) {
-                        previewSizes = size
-                        break
-                    }
-                }
-            }
+                map!!.getOutputSizes(SurfaceTexture::class.java)
+            previewSizes = getOptimalSize(list, screenWidth, screenHeight)
             if (previewSizes == null) previewSizes = Size(1920, 1200)
             println("最终的预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}")
+            val layoutParams = textureView!!.layoutParams
+            layoutParams.height = previewSizes!!.width
+            layoutParams.width = previewSizes!!.height
+            textureView!!.layoutParams = layoutParams
         } catch (e: Exception) {
             e.printStackTrace()
         }
