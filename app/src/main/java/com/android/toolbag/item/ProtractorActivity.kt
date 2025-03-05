@@ -2,7 +2,6 @@ package com.android.toolbag.item
 
 import android.annotation.SuppressLint
 import android.graphics.Matrix
-import android.graphics.Rect
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraCharacteristics
@@ -11,14 +10,17 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Range
 import android.util.Size
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.toolbag.R
+import com.android.toolbag.getOptimalSize
 import kotlin.math.max
 import kotlin.math.min
 
@@ -29,8 +31,8 @@ class ProtractorActivity : AppCompatActivity() {
     private var cameraDevice: CameraDevice? = null
     private var previewBuilder: CaptureRequest.Builder? = null
     private var cameraCaptureSession: CameraCaptureSession? = null
-    private var aspectRatioScreen = 0f
-    private var rect: Rect? = null
+    private var screenWidth = 0
+    private var screenHeight = 0
     private var previewSizes: Size? = null
 
     @SuppressLint("MissingInflatedId")
@@ -42,12 +44,17 @@ class ProtractorActivity : AppCompatActivity() {
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         window.decorView.systemUiVisibility = uiOptions
 
-        rect = Rect()
-        window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenWidth = max(rect!!.width(), rect!!.height())
-        val screenHeight = min(rect!!.width(), rect!!.height())
-        aspectRatioScreen = screenWidth.toFloat() / screenHeight.toFloat()
-        println("屏幕宽高比？   $aspectRatioScreen    ${rect!!.width()}    ${rect!!.height()}")
+        val defaultDisplay =
+            (getSystemService("window") as WindowManager).defaultDisplay
+        val displayMetrics = DisplayMetrics()
+        defaultDisplay.getRealMetrics(displayMetrics)
+        screenWidth =
+            max(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        screenHeight =
+            min(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        println("屏幕宽高比是？   ${screenWidth / screenHeight.toFloat()}    $screenWidth    $screenHeight")
 
         backHomeButton = findViewById(R.id.btn_home)
         backHomeButton?.setOnClickListener { finish() }
@@ -102,21 +109,15 @@ class ProtractorActivity : AppCompatActivity() {
             //获取摄像头支持的配置属性
             val map =
                 cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-
             val list =
-                map!!.getOutputSizes(SurfaceTexture::class.java)!!.sortedByDescending { it.width }
-            for (size in list) {
-                if (size.width > 6000) continue //分辨率过大，使用textureView预览会有卡顿现象
-                val aspectRatioCamera = size.width.toFloat() / size.height.toFloat()
-                if (aspectRatioScreen - 0.25 <= aspectRatioCamera && aspectRatioCamera <= aspectRatioScreen + 0.25) {
-                    if (aspectRatioScreen >= aspectRatioCamera) {
-                        previewSizes = size
-                        break
-                    }
-                }
-            }
+                map!!.getOutputSizes(SurfaceTexture::class.java)
+            previewSizes = getOptimalSize(list, screenWidth, screenHeight)
             if (previewSizes == null) previewSizes = Size(1920, 1200)
             println("预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}")
+            val layoutParams = textureView!!.layoutParams
+            layoutParams.height = previewSizes!!.height
+            layoutParams.width = previewSizes!!.width
+            textureView!!.layoutParams = layoutParams
         } catch (e: Exception) {
             e.printStackTrace()
         }
