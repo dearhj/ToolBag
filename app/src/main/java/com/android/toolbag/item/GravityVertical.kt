@@ -1,7 +1,7 @@
 package com.android.toolbag.item
 
 import android.annotation.SuppressLint
-import android.graphics.Rect
+import android.graphics.Matrix
 import android.graphics.SurfaceTexture
 import android.hardware.Sensor
 import android.hardware.SensorEvent
@@ -14,13 +14,13 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
+import android.util.DisplayMetrics
 import android.util.Range
 import android.util.Size
-import android.view.SurfaceHolder
-import android.view.SurfaceView
+import android.view.Surface
+import android.view.TextureView
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import com.android.toolbag.R
@@ -28,6 +28,7 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import android.widget.ImageView
 import android.widget.TextView
+import com.android.toolbag.getOptimalSize
 import kotlin.math.abs
 import kotlin.math.atan2
 import kotlin.math.max
@@ -36,12 +37,9 @@ import kotlin.math.round
 
 
 class GravityVertical : AppCompatActivity(), SensorEventListener {
-    private var surfaceView: SurfaceView? = null
+    private var textureView: TextureView? = null
     private var mCameraManager: CameraManager? = null
-    private var surfaceHolder: SurfaceHolder? = null
     private var previewSizes: Size? = null
-    private var handler: Handler? = null
-    private var handlerThread: HandlerThread? = null
     private var cameraDevice: CameraDevice? = null
     private var previewBuilder: CaptureRequest.Builder? = null
     private var cameraCaptureSession: CameraCaptureSession? = null
@@ -50,10 +48,11 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
     private var mAccelerometerSensor: Sensor? = null
     private var mSensorManager: SensorManager? = null
 
-    private var rect: Rect? = null
-    private var aspectRatioScreen = 0f
     private var imageView: ImageView? = null
     private var textView: TextView? = null
+
+    private var screenWidth = 0
+    private var screenHeight = 0
 
     private val alpha: Float = 0.8f // 低通滤波器的系数
     private var lastX: Float = 0f
@@ -70,50 +69,53 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
 
-        rect = Rect()
-        window.decorView.getWindowVisibleDisplayFrame(rect)
-        val screenWidth = max(rect!!.width(), rect!!.height())
-        val screenHeight = min(rect!!.width(), rect!!.height())
-        aspectRatioScreen = screenWidth.toFloat() / screenHeight.toFloat()
-        println("屏幕宽高比？   $aspectRatioScreen    ${rect!!.width()}    ${rect!!.height()}")
+        val defaultDisplay =
+            (getSystemService("window") as WindowManager).defaultDisplay
+        val displayMetrics = DisplayMetrics()
+        defaultDisplay.getRealMetrics(displayMetrics)
+        screenWidth =
+            max(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        screenHeight =
+            min(displayMetrics.widthPixels.toDouble(), displayMetrics.heightPixels.toDouble())
+                .toInt()
+        println("屏幕宽高比是？   ${screenWidth / screenHeight.toFloat()}    $screenWidth    $screenHeight")
 
-        surfaceView = findViewById(R.id.camera_layout)
+        textureView = findViewById(R.id.preview_surface)
         mCameraManager = getSystemService(CameraManager::class.java)
 
-        handlerThread = HandlerThread("CameraPreview")
-        handlerThread?.start()
-        handler = Handler(handlerThread!!.looper)
         if (mCameraManager?.cameraIdList?.size == 0) finish()
+        chooseBestPreViewSize()
+
+        textureView!!.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+            override fun onSurfaceTextureAvailable(
+                surface: SurfaceTexture,
+                width: Int,
+                height: Int
+            ) {
+                updateTextureViewTransform()
+            }
+
+            override fun onSurfaceTextureSizeChanged(
+                surface: SurfaceTexture,
+                width: Int,
+                height: Int
+            ) {
+            }
+
+            override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
+                closeCamera()
+                return false
+            }
+
+            override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {}
+        }
 
         backHomeButton = findViewById(R.id.btn_home)
         backHomeButton?.setOnClickListener { finish() }
 
         imageView = findViewById(R.id.plumb_point_img)
         textView = findViewById(R.id.vertical_degree)
-
-        try {
-            surfaceHolder = surfaceView?.holder
-            surfaceHolder?.addCallback(object : SurfaceHolder.Callback {
-                override fun surfaceCreated(holder: SurfaceHolder) {
-                    openCamera()
-                }
-
-                override fun surfaceChanged(
-                    holder: SurfaceHolder,
-                    format: Int,
-                    width: Int,
-                    height: Int
-                ) {
-                }
-
-                override fun surfaceDestroyed(holder: SurfaceHolder) {
-                    //关闭相机释放资源
-                    closeCamera()
-                }
-            })
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
     }
 
     override fun onResume() {
@@ -125,11 +127,51 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
             mAccelerometerSensor,
             SensorManager.SENSOR_DELAY_NORMAL
         )
+        openCamera()
     }
 
     override fun onPause() {
         super.onPause()
         mSensorManager?.unregisterListener(this)
+        closeCamera()
+    }
+
+    private fun chooseBestPreViewSize() {
+        try {
+            if (mCameraManager == null) return
+            //获取摄像头属性描述
+            val cameraCharacteristics =
+                mCameraManager!!.getCameraCharacteristics("0") //后置摄像头
+            //获取摄像头支持的配置属性
+            val map =
+                cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
+            val list =
+                map!!.getOutputSizes(SurfaceTexture::class.java)
+            previewSizes = getOptimalSize(list, screenWidth, screenHeight)
+            if (previewSizes == null) previewSizes = Size(1920, 1200)
+            println("预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}")
+            val layoutParams = textureView!!.layoutParams
+            layoutParams.height = previewSizes!!.height
+            layoutParams.width = previewSizes!!.width
+            textureView!!.layoutParams = layoutParams
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun updateTextureViewTransform() {
+        val matrix = Matrix()
+        val centerX = textureView!!.width / 2f
+        val centerY = textureView!!.height / 2f
+        // 计算缩放比例
+        if (previewSizes == null) return
+        val scaleX = previewSizes!!.width.toFloat() / previewSizes!!.height
+        val scaleY = previewSizes!!.height.toFloat() / previewSizes!!.width
+        // 旋转图像
+        matrix.postRotate(270f, centerX, centerY)
+        matrix.postScale(scaleX, scaleY, centerX, centerY)
+        // 应用变换矩阵
+        textureView!!.setTransform(matrix)
     }
 
     @SuppressLint("DefaultLocale")
@@ -170,50 +212,29 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
     @SuppressLint("MissingPermission")
     private fun openCamera() {
         try {
-            //获取摄像头属性描述
-            val cameraCharacteristics =
-                mCameraManager!!.getCameraCharacteristics("0") //后置摄像头
-            //获取摄像头支持的配置属性
-            val map =
-                cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP)
-
-            val list =
-                map!!.getOutputSizes(SurfaceTexture::class.java)!!.sortedByDescending { it.width }
-            for (size in list) {
-                val aspectRatioCamera = size.width.toFloat() / size.height.toFloat()
-                if (aspectRatioScreen >= 1 && aspectRatioScreen < 1.5) {
-                    if (aspectRatioCamera >= 1 && aspectRatioCamera < 1.5) {
-                        previewSizes = size
-                        break
-                    }
-                } else if (aspectRatioScreen >= 1.5 && aspectRatioScreen < 2) {
-                    if (aspectRatioCamera >= 1.5 && aspectRatioCamera < 2) {
-                        previewSizes = size
-                        break
-                    }
-                } else if (aspectRatioScreen >= 2) {
-                    if (aspectRatioCamera >= 2) {
-                        previewSizes = size
-                        break
-                    }
-                }
-            }
-            println("这里的预览尺寸大小是    ${previewSizes!!.width}    ${previewSizes!!.height}")
-
-            //打开摄像头
-            mCameraManager?.openCamera(
+            if (mCameraManager == null) return
+            mCameraManager!!.openCamera(
                 "0",
-                stateCallback,
-                handler
+                object : CameraDevice.StateCallback() {
+                    override fun onOpened(camera: CameraDevice) {
+                        cameraDevice = camera
+                        startPreview()
+                    }
+
+                    override fun onDisconnected(camera: CameraDevice) {
+                        closeCamera()
+                    }
+
+                    override fun onError(camera: CameraDevice, error: Int) {
+                        closeCamera()
+                    }
+                }, null
             )
         } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    /**
-     * 关闭相机
-     */
     private fun closeCamera() {
         try {
             //关闭相机
@@ -226,30 +247,15 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
         }
     }
 
-    /**
-     * 打开相机的回调，
-     */
-    private val stateCallback: CameraDevice.StateCallback = object : CameraDevice.StateCallback() {
-        override fun onOpened(camera: CameraDevice) {
-            //打开相机后开启预览
-            cameraDevice = camera
-            startPreview()
-        }
-
-        override fun onDisconnected(camera: CameraDevice) {
-            camera.close()
-            closeCamera()
-        }
-
-        override fun onError(camera: CameraDevice, error: Int) {
-            camera.close()
-            closeCamera()
-        }
-    }
-
     private fun startPreview() {
         try {
-            //构建预览请求
+            if (previewSizes == null) return
+            val surfaceTexture = textureView!!.surfaceTexture
+            surfaceTexture!!.setDefaultBufferSize(
+                previewSizes!!.width,
+                previewSizes!!.height
+            ) //设置预览分辨率
+            val surface = Surface(surfaceTexture)
             previewBuilder = cameraDevice!!.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW)
             //设置预览输出的界面
             val fpsRange = Range(25, 30)
@@ -259,48 +265,35 @@ class GravityVertical : AppCompatActivity(), SensorEventListener {
                 CaptureRequest.CONTROL_AF_MODE,
                 CameraMetadata.CONTROL_AF_MODE_CONTINUOUS_PICTURE
             )
-            previewBuilder?.addTarget(surfaceHolder!!.surface)
+            previewBuilder!!.addTarget(surface)
 
-            //创建相机的会话Session
             cameraDevice!!.createCaptureSession(
-                listOf(surfaceHolder!!.surface), sessionStateCallback, handler
+                listOf(surface),
+                object : CameraCaptureSession.StateCallback() {
+                    override fun onConfigured(session: CameraCaptureSession) {
+                        cameraCaptureSession = session
+                        previewBuilder?.setTag("TAG_PREVIEW")
+                        try {
+                            cameraCaptureSession?.setRepeatingRequest(
+                                previewBuilder!!.build(),
+                                null,
+                                null
+                            )
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun onConfigureFailed(session: CameraCaptureSession) {
+                        session.close()
+                        closeCamera()
+                    }
+                },
+                null
             )
         } catch (e: Exception) {
             e.printStackTrace()
             closeCamera()
-        }
-    }
-
-    /**
-     * session的回调
-     */
-    private val sessionStateCallback: CameraCaptureSession.StateCallback =
-        object : CameraCaptureSession.StateCallback() {
-            override fun onConfigured(session: CameraCaptureSession) {
-                //会话已经建立，可以开始预览了
-                cameraCaptureSession = session
-                repeatPreview()
-            }
-
-            override fun onConfigureFailed(session: CameraCaptureSession) {
-                //关闭会话
-                session.close()
-                closeCamera()
-            }
-        }
-
-    private fun repeatPreview() {
-        if (cameraCaptureSession != null) {
-            previewBuilder?.setTag("TAG_PREVIEW")
-            try {
-                cameraCaptureSession?.setRepeatingRequest(
-                    previewBuilder!!.build(),
-                    null,
-                    handler
-                )
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
         }
     }
 }
