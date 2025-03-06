@@ -12,6 +12,7 @@
         <item>@drawable/icon_plumb</item>
         <item>@drawable/icon_protractor</item>
         <item>@drawable/icon_torch</item>
+        <item>@drawable/icon_steprecord</item>
     </array>
     <string-array name="action_name">
         <item>@string/compass</item>
@@ -25,5 +26,6 @@
         <item>@string/plumb</item>
         <item>@string/protractor</item>
         <item>@string/torch</item>
+        <item>@string/step</item>
     </string-array>
 </resources>

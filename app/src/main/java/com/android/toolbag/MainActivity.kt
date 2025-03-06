@@ -2,6 +2,7 @@ package com.android.toolbag
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.widget.AdapterView
@@ -9,6 +10,9 @@ import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.android.toolbag.item.AlarmActivity
 import com.android.toolbag.item.CompassActivity
 import com.android.toolbag.item.FlashlightActivity
@@ -19,7 +23,9 @@ import com.android.toolbag.item.MagnifierActivity
 import com.android.toolbag.item.NoiseActivity
 import com.android.toolbag.item.PaintingActivity
 import com.android.toolbag.item.ProtractorActivity
+import com.android.toolbag.item.StepCounterActivity
 import com.android.toolbag.widget.LineGridView
+import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -44,10 +50,22 @@ class MainActivity : AppCompatActivity() {
 
         startForegroundService(Intent(this, LightControlService::class.java))
 
+        val supportStepCounter =
+            packageManager.hasSystemFeature(PackageManager.FEATURE_SENSOR_STEP_COUNTER)
+
         toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
         lineGridView = findViewById(R.id.tools_app)
+
+        val workRequest =
+            PeriodicWorkRequestBuilder<StepCounterWorker>(15, TimeUnit.MINUTES).build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "StepCounterWorkerTag",
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest
+        )
 
 
         itemName = getResources().getStringArray(R.array.action_name)
@@ -60,10 +78,18 @@ class MainActivity : AppCompatActivity() {
         obtainTypedArray.recycle()
         item = ArrayList()
         actionImageResIds.indices.forEach { i ->
-            val hashMap = HashMap<String, Any>()
-            hashMap["img"] = Integer.valueOf(actionImageResIds[i])
-            hashMap["text"] = itemName!![i]
-            (item as ArrayList<Map<String, Any>>).add(hashMap)
+            val itemName = itemName!![i]
+            val hashMap = hashMapOf<String, Any>(
+                "img" to actionImageResIds[i],
+                "text" to itemName
+            )
+            when {
+                itemName != getString(R.string.step) -> (item as ArrayList<Map<String, Any>>).add(
+                    hashMap
+                )
+
+                supportStepCounter -> (item as ArrayList<Map<String, Any>>).add(hashMap)
+            }
         }
 
         val iArr = intArrayOf(R.id.img, R.id.text)
@@ -78,43 +104,57 @@ class MainActivity : AppCompatActivity() {
     private fun startItemActivity(item: String) {
         when (item) {
             getString(R.string.torch) -> {
-                 val intent = Intent(this, FlashlightActivity::class.java)
-                 startActivity(intent)
+                val intent = Intent(this, FlashlightActivity::class.java)
+                startActivity(intent)
             }
+
             getString(R.string.protractor) -> {
                 val intent = Intent(this, ProtractorActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.plumb) -> {
                 val intent = Intent(this, GravityVertical::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.noise) -> {
                 val intent = Intent(this, NoiseActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.magnifier) -> {
                 val intent = Intent(this, MagnifierActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.height_measure) -> {
                 val intent = Intent(this, HeightMeasureActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.handingpaint) -> {
                 val intent = Intent(this, PaintingActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.gradienter) -> {
                 val intent = Intent(this, GradientActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.compass) -> {
                 val intent = Intent(this, CompassActivity::class.java)
                 startActivity(intent)
             }
+
             getString(R.string.alarm) -> {
                 val intent = Intent(this, AlarmActivity::class.java)
+                startActivity(intent)
+            }
+
+            getString(R.string.step) -> {
+                val intent = Intent(this, StepCounterActivity::class.java)
                 startActivity(intent)
             }
         }

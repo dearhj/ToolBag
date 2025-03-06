@@ -11,6 +11,10 @@
     <string name="plumb">铅锤</string>
     <string name="protractor">量角器</string>
     <string name="torch">手电筒</string>
+    <string name="step">计步器</string>
+    <string name="today_target">今日目标</string>
+    <string name="history_step">查看历史步数</string>
+    <string name="set_plan">设置锻炼计划</string>
     <string name="services_tip">欢迎使用工具箱！</string>
     <string name="flashlight">闪灯</string>
     <string name="alarming">警报</string>

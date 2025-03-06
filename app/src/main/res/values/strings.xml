@@ -11,6 +11,10 @@
     <string name="plumb">Plumb Bob</string>
     <string name="protractor">Protractor</string>
     <string name="torch">Flashlight</string>
+    <string name="step">Pedometer</string>
+    <string name="today_target">Target Today</string>
+    <string name="history_step">History Steps</string>
+    <string name="set_plan">Set Target</string>
     <string name="services_tip">Welcome to the ToolBag application!</string>
     <string name="flashlight">Flash Light</string>
     <string name="alarming">Alarm Bell</string>
