@@ -57,4 +57,7 @@
     <string name="fail_1">请按图示方法，将设备垂直于水平面后再次尝试！</string>
     <string name="fail_2">请按图示调整设备方向，确保设备顶部靠近眼睛一侧！</string>
     <string name="fail_3">请按图示方法，确保眼睛、设备、被测物顶端位于同一直线上！</string>
+    <string name="sure">确定</string>
+    <string name="cancel">取消</string>
+    <string name="input">请输入目标步数</string>
 </resources>

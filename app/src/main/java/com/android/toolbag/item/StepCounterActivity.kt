@@ -1,11 +1,17 @@
 package com.android.toolbag.item
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.view.LayoutInflater
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.android.toolbag.App
 import com.android.toolbag.R
+import com.android.toolbag.bean.TurnOnTime
 import com.android.toolbag.formatDate
 import com.android.toolbag.getTodayInfoAsInt
 import com.android.toolbag.updateStepsInfo
@@ -63,7 +70,10 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
         todayCount = findViewById(R.id.tv_data)
         barChart = findViewById(R.id.barChart)
 
+        stepArcView?.setTarget(App.dao?.getTurnOnTime("targetNum")?.dataValue ?: 7000)
+
         todayTarget!!.setOnClickListener {
+            showEditTextDialog()
         }
 
         todayCount!!.setOnClickListener {
@@ -185,5 +195,54 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) {
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showEditTextDialog() {
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.input_layout, null)
+        val inputValue = dialogView.findViewById<EditText>(R.id.text)
+        val regex = "^(?:[1-9]\\d{0,5}|1000000)\$".toRegex()
+        var lastValidValue = ""
+        inputValue.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                try {
+                    s?.let {
+                        var input = it.toString()
+                        if (input.isEmpty() || regex.matches(input)) {
+                            if (input.startsWith("0") && input.length > 1) {
+                                input = input.substring(1)
+                                inputValue.setText(input)
+                                inputValue.setSelection(inputValue.text.length)
+                            }
+                            lastValidValue = input
+                        } else {
+                            inputValue.setText(lastValidValue)
+                            inputValue.setSelection(inputValue.text.length)
+                        }
+                    }
+                } catch (_: Exception) {
+                }
+            }
+        })
+        val dialog = AlertDialog.Builder(this)
+            .setTitle(getString(R.string.input))
+            .setView(dialogView)
+            .setPositiveButton(getString(R.string.sure)) { _, _ ->
+                if (inputValue.text.toString() != "")
+                    updateTargetValue(inputValue.text.toString().toInt())
+            }
+            .setNegativeButton(getString(R.string.cancel)) { _, _ -> }
+            .create()
+        dialog.show()
+    }
+
+    private fun updateTargetValue(value: Int) {
+        App.dao?.insertOrUpdateToTurnOnTime(TurnOnTime("targetNum", value))
+        stepArcView!!.setTodayTargetCount(value)
     }
 }

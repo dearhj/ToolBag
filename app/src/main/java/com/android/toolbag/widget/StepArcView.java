@@ -236,6 +236,10 @@ public class StepArcView extends View {
         setAnimation(0f, currentAngleLength);
     }
 
+    public void setTarget(int targetNum){
+        todayStepNumber = targetNum;
+    }
+
     /**
      * 为进度设置动画
      * ValueAnimator是整个属性动画机制当中最核心的一个类，属性动画的运行机制是通过不断地对值进行操作来实现的，

@@ -23,9 +23,9 @@ interface StepCountDao {
     @Query("DELETE FROM step_count WHERE date < :cutoffDate")
     fun deleteOldData(cutoffDate: Int)
 
-    // 查询开机时间表中的数据，如果不存在则返回 null
-    @Query("SELECT * FROM turn_on_time LIMIT 1")
-    fun getTurnOnTime(): TurnOnTime?
+    // 查询开机时间数据
+    @Query("SELECT * FROM turn_on_time WHERE name = :name")
+    fun getTurnOnTime(name: String): TurnOnTime?
 
     // 插入数据，如果数据已存在则更新
     @Insert(onConflict = OnConflictStrategy.REPLACE)

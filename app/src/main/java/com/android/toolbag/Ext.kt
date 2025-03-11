@@ -222,7 +222,7 @@ fun updateStepsInfo(mContext: Context) {
     MainScope().launch(Dispatchers.IO) {
         val todayInt = getTodayInfoAsInt() //今天日期
         val todayStr = getTodayInfo() //今天日期字符串形式
-        val turnOnTime = App.dao?.getTurnOnTime()?.lastTurnOnTime ?: 18931226  //开机时间，传感器数据清空时间
+        val turnOnTime = App.dao?.getTurnOnTime("TurnOn")?.dataValue ?: 18931226  //开机时间，传感器数据清空时间
         App.dao?.deleteOldData(getDate30DaysAgo()) //删除30天以前的数据
         if (todayInt == turnOnTime) { //今天刚开机
             val yesInt = getYesterdayDateAsInt()
