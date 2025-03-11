@@ -9,4 +9,5 @@ data class StepCount(
     val displayDate: String, //用于UI显示的时间 格式03/10 去掉年份
     val todaySteps: Long,  //用于记录今日步数，
     val sensorSteps: Long, //用于记录此时传感器数据，
+    val virtualData: Boolean = false, //用于标记是否使虚拟数据，
 )

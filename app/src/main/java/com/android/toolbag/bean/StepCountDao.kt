@@ -15,6 +15,10 @@ interface StepCountDao {
     @Query("SELECT * FROM step_count WHERE date = :date")
     fun getStepCountByDate(date: Int): StepCount?
 
+    //查询所有数据
+    @Query("SELECT * FROM step_count")
+    fun getAllStepCounts(): MutableList<StepCount>?
+
     // 删除指定日期之后的所有数据
     @Query("DELETE FROM step_count WHERE date > :cutoffDate")
     fun deleteAfterDate(cutoffDate: Int)

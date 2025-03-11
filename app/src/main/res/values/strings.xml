@@ -60,4 +60,7 @@
     <string name="sure">Sure</string>
     <string name="cancel">Cancel</string>
     <string name="input">Please enter the target number of steps</string>
+    <string name="data_history">Date</string>
+    <string name="count_history">Step Number</string>
+    <string name="title_history">Historical Data(Last 30 Days)</string>
 </resources>

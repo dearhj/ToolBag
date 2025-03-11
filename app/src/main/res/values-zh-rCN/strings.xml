@@ -60,4 +60,7 @@
     <string name="sure">确定</string>
     <string name="cancel">取消</string>
     <string name="input">请输入目标步数</string>
+    <string name="data_history">日期</string>
+    <string name="count_history">步数</string>
+    <string name="title_history">历史数据(最近30天)</string>
 </resources>

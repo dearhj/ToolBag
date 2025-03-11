@@ -116,6 +116,14 @@ fun formatDate(input: String): String {
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
+fun formatDateStr(input: String): String {
+    val inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
+    val outputFormatter = DateTimeFormatter.ofPattern("yyyy/MM/dd")
+    val date = LocalDate.parse(input, inputFormatter)
+    return date.format(outputFormatter)
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
 fun getTodayInfoAsInt(): Int {
     val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     val currentDate = LocalDate.now().format(formatter)
@@ -230,13 +238,13 @@ fun updateStepsInfo(mContext: Context) {
             App.dao?.insertOrUpdateToTurnOnTime(TurnOnTime("TurnOn", yesInt)) //将传感器开机记录数据时间调整为前一天
             val todaySteps =
                 App.dao?.getStepCountByDate(todayInt)?.todaySteps ?: 0L //从数据库中获取今天的步数信息
-            val yesStepsInfo = App.dao?.getStepCountByDate(yesInt) //从数据库中获取前一天的步数信息
-            if (yesStepsInfo != null)
+            val yesInfo = App.dao?.getStepCountByDate(yesInt) //从数据库中获取前一天的步数信息
+            if (yesInfo != null)
                 App.dao?.insertOrUpdate( //将今日步数的负值作为昨日数据的sensorSteps，更新到数据库
-                    StepCount(yesInt, yesStr, yesStepsInfo.todaySteps, -todaySteps)
+                    StepCount(yesInt, yesStr, yesInfo.todaySteps, -todaySteps, yesInfo.virtualData)
                 )
             else  //新插入一条假数据,今天步数负值为昨日的sensorSteps值
-                App.dao?.insertOrUpdate(StepCount(yesInt, yesStr, 0, -todaySteps))
+                App.dao?.insertOrUpdate(StepCount(yesInt, yesStr, 0, -todaySteps, true))
             getCurrentSteps(mContext) {
                 App.dao?.insertOrUpdate(
                     StepCount(todayInt, todayStr, it + todaySteps, it)
@@ -244,34 +252,34 @@ fun updateStepsInfo(mContext: Context) {
             }
         } else if (todayInt > turnOnTime) { //之前就已经开机了
             val yesterdayInt = getYesterdayDateAsInt()
-            val theDayBeforeSteps = App.dao?.getStepCountByDate(yesterdayInt) //从数据库中获取前一天的步数信息
+            val yesSteps = App.dao?.getStepCountByDate(yesterdayInt) //从数据库中获取前一天的步数信息
             getCurrentSteps(mContext) {
-                if (theDayBeforeSteps != null)
+                if (yesSteps != null)
                     App.dao?.insertOrUpdate( //将传感器数据与前一天数据中的sensorSteps相减后更新到数据库，并更新sensorSteps为传感器具体值
-                        StepCount(todayInt, todayStr, it - theDayBeforeSteps.sensorSteps, it)
+                        StepCount(todayInt, todayStr, it - yesSteps.sensorSteps, it)
                     )
                 else { //记录今日数据0，创建虚拟数据，将传感器数据作为前一日数据的sensorSteps插入数据
                     App.dao?.insertOrUpdate(StepCount(todayInt, todayStr, 0, it))
                     val yesterdayStr = getYesterdayDateInfo()
-                    App.dao?.insertOrUpdate(StepCount(yesterdayInt, yesterdayStr, 0, it))
+                    App.dao?.insertOrUpdate(StepCount(yesterdayInt, yesterdayStr, 0, it, true))
                 }
             }
         } else { //用户将系统时间往前调了
-            val yesterdayInt = getYesterdayDateAsInt()
+            val yesInt = getYesterdayDateAsInt()
             App.dao?.deleteAfterDate(todayInt) //删除今天之后的所有数据
             App.dao?.insertOrUpdateToTurnOnTime(
-                TurnOnTime("TurnOn", yesterdayInt)
+                TurnOnTime("TurnOn", yesInt)
             ) //将传感器开机记录数据时间调整为前一天
-            val theDayBeforeSteps = App.dao?.getStepCountByDate(yesterdayInt) //从数据库中获取前一天的步数信息
+            val yesSteps = App.dao?.getStepCountByDate(yesInt) //从数据库中获取前一天的步数信息
             getCurrentSteps(mContext) {
                 App.dao?.insertOrUpdate(StepCount(todayInt, todayStr, 0, it)) //将当天数据更新为0
-                val yesterdayStr = getYesterdayDateInfo()
-                if (theDayBeforeSteps != null) {
+                val yesStr = getYesterdayDateInfo()
+                if (yesSteps != null) {
                     App.dao?.insertOrUpdate( //将昨天数据中的sensorSteps修改为传感器实时数据后，更新到数据库
-                        StepCount(yesterdayInt, yesterdayStr, theDayBeforeSteps.todaySteps, it)
+                        StepCount(yesInt, yesStr, yesSteps.todaySteps, it, yesSteps.virtualData)
                     )
                 } else  //创建虚拟数据，将传感器数据作为前一日数据sensorSteps插入数据库
-                    App.dao?.insertOrUpdate(StepCount(yesterdayInt, yesterdayStr, 0, it))
+                    App.dao?.insertOrUpdate(StepCount(yesInt, yesStr, 0, it, true))
             }
         }
     }

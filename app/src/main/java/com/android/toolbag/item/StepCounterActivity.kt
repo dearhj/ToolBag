@@ -2,6 +2,7 @@ package com.android.toolbag.item
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Intent
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -77,6 +78,8 @@ class StepCounterActivity : AppCompatActivity(), SensorEventListener {
         }
 
         todayCount!!.setOnClickListener {
+            val intent = Intent(this, HistoryStepsActivity::class.java)
+            startActivity(intent)
         }
 
         initBarChart(barChart!!)
