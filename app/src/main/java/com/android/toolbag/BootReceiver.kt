@@ -3,24 +3,21 @@ package com.android.toolbag
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import java.util.concurrent.TimeUnit
+import android.os.Build
+import android.os.SystemClock
+import androidx.core.content.ContextCompat.startForegroundService
+import com.android.toolbag.bean.TurnOnTime
 
 
 class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        println("这里收到了开机广播1111")
+        //应用首次启动也会执行这里，奇怪了。
         if (Intent.ACTION_BOOT_COMPLETED == intent.action) {
-            // 处理开机自启动任务，获取当前步数数据并保存
-            val workRequest =
-                PeriodicWorkRequestBuilder<StepCounterWorker>(15, TimeUnit.MINUTES).build()
-            WorkManager.getInstance(App.mContext!!).enqueueUniquePeriodicWork(
-                "StepCounterWorkerTag",
-                ExistingPeriodicWorkPolicy.UPDATE,
-                workRequest
-            )
+            if (SystemClock.elapsedRealtime() < 1000 * 30) { //设备启动时间大于30s，在执行此处则不认为是设备开机完成
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    App.dao?.insertOrUpdateToTurnOnTime(TurnOnTime("TurnOn", getTodayInfoAsInt()))
+            }
+            startForegroundService(context, Intent(context, LightControlService::class.java))
         }
     }
 }

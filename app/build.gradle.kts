@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -51,4 +52,9 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.work.runtime.ktx)
     implementation(libs.androidChart)
+    implementation(libs.room.runtime)
+    implementation(libs.room.ktx)
+    implementation(libs.baseRecyclerViewAdapterHelper)
+    debugImplementation(libs.glance)
+    ksp(libs.room.compiler)
 }

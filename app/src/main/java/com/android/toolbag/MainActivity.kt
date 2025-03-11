@@ -10,9 +10,6 @@ import android.widget.SimpleAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.WindowCompat
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
 import com.android.toolbag.item.AlarmActivity
 import com.android.toolbag.item.CompassActivity
 import com.android.toolbag.item.FlashlightActivity
@@ -25,7 +22,6 @@ import com.android.toolbag.item.PaintingActivity
 import com.android.toolbag.item.ProtractorActivity
 import com.android.toolbag.item.StepCounterActivity
 import com.android.toolbag.widget.LineGridView
-import java.util.concurrent.TimeUnit
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,16 +53,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         lineGridView = findViewById(R.id.tools_app)
-
-        val workRequest =
-            PeriodicWorkRequestBuilder<StepCounterWorker>(15, TimeUnit.MINUTES).build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "StepCounterWorkerTag",
-            ExistingPeriodicWorkPolicy.UPDATE,
-            workRequest
-        )
-
 
         itemName = getResources().getStringArray(R.array.action_name)
         val obtainTypedArray = getResources().obtainTypedArray(R.array.actions_images)

@@ -206,9 +206,9 @@ public class StepArcView extends View {
      *
      * @param currentCounts 所走步数
      */
-    public void setCurrentCount(int currentCounts) {
+    public void setCurrentCount(long currentCounts) {
         //如果当前走的步数超过总步数则圆弧还是270度，不能成为园
-        int count = Math.min(currentCounts, todayStepNumber);
+        long count = Math.min(currentCounts, todayStepNumber);
         //上次所走步数占用总共步数的百分比
         float scalePrevious = (float) Integer.parseInt(stepNumber) / todayStepNumber;
         if (scalePrevious >= 1) scalePrevious = 1f;
@@ -265,7 +265,7 @@ public class StepArcView extends View {
     /**
      * 设置文本大小,防止步数特别大之后放不下，将字体大小动态设置
      */
-    public void setTextSize(int num) {
+    public void setTextSize(long num) {
         String s = String.valueOf(num);
         int length = s.length();
         if (length <= 4) {
