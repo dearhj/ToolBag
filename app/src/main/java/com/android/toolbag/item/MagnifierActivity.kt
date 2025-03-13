@@ -25,7 +25,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.android.toolbag.R
 import com.android.toolbag.customToast
-import kotlin.math.abs
+import com.android.toolbag.getOptimalSize
 import kotlin.math.max
 import kotlin.math.min
 
@@ -213,27 +213,6 @@ class MagnifierActivity : AppCompatActivity() {
         super.onPause()
         closeCamera()
     }
-
-    private fun getOptimalSize(sizeArr: Array<Size>, width: Int, height: Int): Size? {
-        var d = (width / height).toDouble()
-        if (d > 2.0) {
-            d = 2.0
-        }
-        var d2 = Double.MAX_VALUE
-        var size: Size? = null
-        val sizeList = sizeArr.sortedByDescending { it.width }
-        for (size2 in sizeList) {
-            if (abs((size2.width / size2.height) - d) <= 0.02) {
-                val abs = abs((size2.height - height).toDouble())
-                if (abs <= d2) {
-                    size = size2
-                    d2 = abs
-                }
-            }
-        }
-        return size
-    }
-
 
     private fun updateCameraPreview() {
         if (cameraDevice != null && previewBuilder != null) {
