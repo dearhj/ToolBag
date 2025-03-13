@@ -29,6 +29,7 @@ import java.io.IOException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import kotlin.math.abs
+import kotlin.properties.Delegates
 
 fun observerGlobal(context: Context, name: String, block: (Boolean) -> Unit) {
     observer(context, Settings.Global.getUriFor(name), block)
@@ -281,6 +282,25 @@ fun updateStepsInfo(mContext: Context) {
                 } else  //创建虚拟数据，将传感器数据作为前一日数据sensorSteps插入数据库
                     App.dao?.insertOrUpdate(StepCount(yesInt, yesStr, 0, it, true))
             }
+        }
+    }
+}
+
+
+var change: Change? = null
+
+interface Change {
+    fun change(level: Int)
+}
+
+var batteryChange: Int by Delegates.observable(0) { _, _, new ->
+    change?.change(new)
+}
+
+fun batteryChangeLevel(ch: (level: Int) -> Unit) {
+    change = object : Change {
+        override fun change(level: Int) {
+            ch(level)
         }
     }
 }

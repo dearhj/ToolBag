@@ -9,6 +9,7 @@ import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
@@ -24,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.android.toolbag.R
+import com.android.toolbag.batteryChangeLevel
 import com.android.toolbag.customToast
 import com.android.toolbag.getOptimalSize
 import kotlin.math.max
@@ -54,6 +56,7 @@ class MagnifierActivity : AppCompatActivity() {
     private var hasBackCamera = false
     private var maxZoom = 0f  //最大变焦倍数
     private var currentZoomLevel = 1f  //当前变焦倍数
+    private var batteryManager: BatteryManager? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,6 +73,7 @@ class MagnifierActivity : AppCompatActivity() {
 
         textureView = findViewById(R.id.preview_surface)
         cameraManager = getSystemService(CAMERA_SERVICE) as CameraManager
+        batteryManager = getSystemService(BATTERY_SERVICE) as BatteryManager
 
         flashButton = findViewById(R.id.ic_camera_flash)
         changeCameraButton = findViewById(R.id.ic_camera_switch)
@@ -125,6 +129,12 @@ class MagnifierActivity : AppCompatActivity() {
         flashButton?.setOnClickListener {
             if (!flashAvailable) customToast(this, getString(R.string.not_support_flash))
             else {
+                val batteryValue =
+                    batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: 0
+                if (batteryValue <= 15) {
+                    customToast(this, getString(R.string.battery_low))
+                    return@setOnClickListener
+                }
                 if (!flashIsOn) {
                     flashButton?.setImageDrawable(getDrawable(R.drawable.ic_flash_img_on_icon))
                     flashIsOn = true
@@ -134,6 +144,14 @@ class MagnifierActivity : AppCompatActivity() {
                     flashIsOn = false
                     changeFlashlightStatus(false)
                 }
+            }
+        }
+
+        batteryChangeLevel {
+            if (it <= 15 && flashIsOn) {
+                flashButton?.setImageDrawable(getDrawable(R.drawable.ic_flash_img_close_icon))
+                flashIsOn = false
+                changeFlashlightStatus(false)
             }
         }
 

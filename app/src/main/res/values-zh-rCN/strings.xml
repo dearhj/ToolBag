@@ -63,4 +63,5 @@
     <string name="data_history">日期</string>
     <string name="count_history">步数</string>
     <string name="title_history">历史数据(最近30天)</string>
+    <string name="battery_low">电量低于15%，此功能暂时无法使用！</string>
 </resources>

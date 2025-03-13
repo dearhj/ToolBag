@@ -63,4 +63,5 @@
     <string name="data_history">Date</string>
     <string name="count_history">Step Number</string>
     <string name="title_history">Historical Data(Last 30 Days)</string>
+    <string name="battery_low">The battery level is below 15%, this function is temporarily unavailable!</string>
 </resources>

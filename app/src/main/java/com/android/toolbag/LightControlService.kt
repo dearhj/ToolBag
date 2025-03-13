@@ -15,6 +15,7 @@ import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
 import android.hardware.camera2.CameraManager
+import android.os.BatteryManager
 import android.os.Build
 import android.os.IBinder
 import android.provider.Settings
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit
 class LightControlService : Service() {
     private var loopJob: Job? = null
     private var mSensorManager: SensorManager? = null
+    private var batteryManager: BatteryManager? = null
 
     @SuppressLint("NewApi", "ForegroundServiceType")
     override fun onCreate() {
@@ -51,6 +53,7 @@ class LightControlService : Service() {
         startForeground(1, notification)
 
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         observerGlobal(mContext!!, "flashLight_sos") {
             val status = Settings.Global.getString(contentResolver, "flashLight_sos") ?: "off"
             if (status == "on") {
@@ -90,6 +93,22 @@ class LightControlService : Service() {
             } else {
                 loopJob?.cancel()
                 cameraManager?.setTorchMode("0", false)
+            }
+        }
+
+        MainScope().launch(Dispatchers.IO) {
+            while (true) {
+                try {
+                    val batteryValue =
+                        batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+                            ?: 0
+                    if (batteryValue <= 15) { //关闭闪光灯
+                        batteryChange = batteryValue
+                        cameraManager?.setTorchMode("0", false)
+                    }
+                } catch (_: Exception){
+                }
+                delay(30000)
             }
         }
 

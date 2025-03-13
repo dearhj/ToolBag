@@ -1,9 +1,11 @@
 package com.android.toolbag.item
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.media.MediaPlayer
+import android.os.BatteryManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -15,6 +17,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.android.toolbag.App.Companion.cameraManager
 import com.android.toolbag.R
+import com.android.toolbag.batteryChangeLevel
+import com.android.toolbag.customToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
@@ -32,6 +36,7 @@ class AlarmActivity : AppCompatActivity() {
     private var alarmLampButton: ImageView? = null
 
     private var mediaPlayer: MediaPlayer? = null
+    private var batteryManager: BatteryManager? = null
 
     private var lightJob: Job? = null
     private var alarmLightJob: Job? = null
@@ -48,6 +53,7 @@ class AlarmActivity : AppCompatActivity() {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             window.isNavigationBarContrastEnforced = false
         }
+        batteryManager = getSystemService(Context.BATTERY_SERVICE) as BatteryManager
         halfTop = findViewById(R.id.top_half)
         halfTopLand = findViewById(R.id.top_half_land)
         halfBottom = findViewById(R.id.bottom_half)
@@ -69,6 +75,12 @@ class AlarmActivity : AppCompatActivity() {
         }
 
         flashLightButton?.setOnClickListener {
+            val batteryValue =
+                batteryManager?.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY) ?: 0
+            if (batteryValue <= 15) {
+                customToast(this, getString(R.string.battery_low))
+                return@setOnClickListener
+            }
             if (!flashLightFlag) {
                 if ((Settings.Global.getString(contentResolver, "flashLight_sos")
                         ?: "off") != "off"
@@ -101,6 +113,14 @@ class AlarmActivity : AppCompatActivity() {
                 alarmLightFlag = false
                 playOrStopAlarmLight(false)
                 alarmLampButton?.setImageResource(R.drawable.btn_screenflash_one)
+            }
+        }
+
+        batteryChangeLevel {
+            if (it <= 15 && flashLightFlag) {
+                flashLightFlag = false
+                flashLightButton?.setImageResource(R.drawable.btn_flashlight_one)
+                flashLightThread(false)
             }
         }
     }
@@ -211,18 +231,22 @@ class AlarmActivity : AppCompatActivity() {
 
 
     private fun flashLightThread(lightUp: Boolean) {
-        if (lightUp) {
-            lightJob = MainScope().launch(Dispatchers.IO) {
-                while (true) {
-                    cameraManager?.setTorchMode("0", true)
-                    delay(100)
-                    cameraManager?.setTorchMode("0", false)
-                    delay(100)
+        try {
+            if (lightUp) {
+                lightJob = MainScope().launch(Dispatchers.IO) {
+                    while (true) {
+                        cameraManager?.setTorchMode("0", true)
+                        delay(100)
+                        cameraManager?.setTorchMode("0", false)
+                        delay(100)
+                    }
                 }
+            } else {
+                lightJob?.cancel()
+                cameraManager?.setTorchMode("0", false)
             }
-        } else {
-            lightJob?.cancel()
-            cameraManager?.setTorchMode("0", false)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
